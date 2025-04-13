@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern PDF Viewer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+  </script>
+
+  <style>
+    .highlight {
+      /* background-color: yellow; */
+      border: 1px dotted red;
+
+    }
+    .textLayer {
+      position: absolute;
+      top: 0;
+      left: 25px;
+      user-select: text;
+      pointer-events: auto;
+      z-index: 10;
+    }
+    .textLayer span {
+  margin-bottom: 10px;
+  text-rendering: auto;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 1em;
+  font-weight: bolder;
+  line-height: 1;
+  /* color: transparent; */
+}
+
+
+    .textLayer > div {
+      position: absolute;
+      white-space: pre;
+      transform-origin: 0 0;
+      color: black;
+      background: transparent;
+      font-family: sans-serif;
+    }
+    .draggable {
+      position: absolute; /* Allow absolute positioning for dragging */
+      cursor: move; /* Change cursor to indicate draggable */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex justify items-left p-6">
+
+  <!-- First Div (PDF Viewer) -->
+  <div class="max-w-4xl w-full h-full bg-white rounded-xl shadow-lg p-6 mb-6">
+    <h1 class="text-2xl font-bold text-center mb-4">📄 Modern PDF Viewer</h1>
+
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+      <input id="file-input" type="file" accept="application/pdf" class="px-4 py-2 border rounded-lg shadow-sm w-full md:w-auto">
+      <div class="flex gap-2">
+        <button id="zoom-in" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Zoom In</button>
+        <button id="zoom-out" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Zoom Out</button>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-4">
+      <button id="prev" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">⬅ Prev</button>
+      <span id="page-info" class="text-lg font-medium text-gray-700">Page 1 / 1</span>
+      <button id="next" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Next ➡</button>
+    </div>
+
+    <div id="pdf-container" class="relative border rounded-xl shadow bg-white">
+      <canvas id="pdf-canvas" class="block mx-auto"></canvas>
+      <div id="text-layer" class="textLayer"></div>
+    </div>
+  </div>
+
+  <!-- Second Div (Analysis) -->
+  <div id="draggable-div" class="max-w-4xl w-full bg-black bg-opacity-50 rounded-xl shadow-lg p-6 draggable" style="width: 500px;left: 1000px;">
+    <h1 class="text-2xl font-bold text-center mb-4 text-white">📄 Analysis</h1>
+    <h5 id="selectedword" style="color: aliceblue;"></h5>
+    <h4>Definition: <span id="word"></span></h5>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+      <!-- Add content here as needed -->
+    </div>
+  </div>
+
+  <script src="./scriptpdf.js"></script>
+
+  <script>
+    // JavaScript to handle dragging
+    const draggableDiv = document.getElementById('draggable-div');
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    draggableDiv.addEventListener('mousedown', function(e) {
+      isDragging = true;
+      offsetX = e.clientX - draggableDiv.offsetLeft;
+      offsetY = e.clientY - draggableDiv.offsetTop;
+      document.body.style.cursor = 'move'; // Change cursor during drag
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (isDragging) {
+        draggableDiv.style.left = `${e.clientX - offsetX}px`;
+        draggableDiv.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', function() {
+      isDragging = false;
+      document.body.style.cursor = 'default'; // Reset cursor when drag ends
+    });
+    
+  </script>
+
+</body>
+</html>

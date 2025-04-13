@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Highlight Selected Text</title>
+  <style>
+    .highlight {
+      background-color: yellow;
+    }
+  </style>
+</head>
+<body>
+
+<p id="text">
+  Select any part of this paragraph and it will be highlighted when you release the mouse button.
+</p>
+
+<script>
+  document.addEventListener("mouseup", () => {
+    const selection = window.getSelection();
+    const selectedText = selection.toString();
+
+    if (selectedText.length > 0) {
+      const range = selection.getRangeAt(0);
+      const span = document.createElement("span");
+      span.className = "highlight";
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      // Clear selection
+      selection.removeAllRanges();
+    }
+  });
+</script>
+
+</body>
+</html>
